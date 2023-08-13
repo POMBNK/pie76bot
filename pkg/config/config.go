@@ -7,14 +7,7 @@ import (
 )
 
 type Config struct {
-	IsDebug bool `yaml:"is_debug"`
-	Listen  struct {
-		Type   string `yaml:"type"`
-		BindIP string `yaml:"bind_ip"`
-		Port   string `yaml:"port"`
-	} `yaml:"listen"`
 	Storage struct {
-		Type       string
 		Postgresql Postgresql `json:"postgresql"`
 	} `yaml:"storage"`
 }

@@ -1,19 +1,27 @@
 package bot
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"pie76bot/internal/hero"
 	"pie76bot/internal/user"
+	"pie76bot/pkg/logger"
 )
 
 type Bot struct {
 	bot         *tgbotapi.BotAPI
+	logs        *logger.Logger
 	userService user.Service
+	heroService hero.Service
+	//pieService
 }
 
-func New(bot *tgbotapi.BotAPI, service user.Service) *Bot {
+func New(bot *tgbotapi.BotAPI, logs *logger.Logger, userService user.Service, heroService hero.Service) *Bot {
 	return &Bot{
 		bot:         bot,
-		userService: service,
+		logs:        logs,
+		userService: userService,
+		heroService: heroService,
 	}
 }
 
@@ -25,15 +33,17 @@ func (b *Bot) Start() error {
 	if err != nil {
 		return err
 	}
+
+	//for keyboard
 	for update := range updates {
 		if update.Message == nil {
 			continue
 		}
 
-		if update.Message.IsCommand() {
-			err = b.handleCommand(update.Message)
+		if update.Message.Text != "" {
+			err = b.handleButton(update.Message)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed start tg bot due error:%w", err)
 			}
 		}
 	}

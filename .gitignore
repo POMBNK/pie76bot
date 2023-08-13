@@ -1,3 +1,8 @@
 .log
 .idea
 .sql
+.env
+/cmd/app2/
+/logs/
+/data.sql
+/data2.sql
