@@ -15,7 +15,7 @@ import (
 	"pie76bot/pkg/logger"
 )
 
-//TODO: 1) wrap errors, because tg bot crashes when err returns
+//TODO: 1) wrap and handle errors, because tg bot crashes when err returns
 //		2) tg id not uniq while signup
 //		3) users_heroes doesn't filled when hero created
 //		4) Wrong command handler doesn't work
@@ -36,7 +36,7 @@ func main() {
 	if err != nil {
 		logs.Fatalln(err)
 	}
-	tgapi.Debug = true
+	tgapi.Debug = false
 	//application
 
 	//user

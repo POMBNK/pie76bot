@@ -26,26 +26,39 @@ func New(bot *tgbotapi.BotAPI, logs *logger.Logger, userService user.Service, he
 }
 
 func (b *Bot) Start() error {
-	updatesConfig := tgbotapi.NewUpdate(0)
-	updatesConfig.Timeout = 60
-
-	updates, err := b.bot.GetUpdatesChan(updatesConfig)
+	updates, err := b.initUpdateConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to start bot due error:%w", err)
 	}
 
-	//for keyboard
+	b.handleUpdates(updates)
+
+	return nil
+}
+
+func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 	for update := range updates {
 		if update.Message == nil {
 			continue
 		}
 
 		if update.Message.Text != "" {
-			err = b.handleButton(update.Message)
+			err := b.handleButton(update.Message)
 			if err != nil {
-				return fmt.Errorf("failed start tg bot due error:%w", err)
+				b.logs.Errorf("failed to handle update:%s", err)
+				continue
 			}
 		}
 	}
-	return nil
+}
+
+func (b *Bot) initUpdateConfig() (tgbotapi.UpdatesChannel, error) {
+	updatesConfig := tgbotapi.NewUpdate(0)
+	updatesConfig.Timeout = 60
+
+	updates, err := b.bot.GetUpdatesChan(updatesConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get updates channel due error:%w", err)
+	}
+	return updates, err
 }

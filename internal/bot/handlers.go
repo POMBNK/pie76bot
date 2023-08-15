@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -47,9 +48,12 @@ func (b *Bot) handleStartButton(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleUnknownCommand(message *tgbotapi.Message) error {
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Wrong command")
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Wrong command or invalid input")
 	_, err := b.bot.Send(msg)
-	return err
+	if err != nil {
+		return err
+	}
+	return fmt.Errorf("invalid input")
 }
 
 func existCommand(input string, validCommands []string) bool {

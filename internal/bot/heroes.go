@@ -70,13 +70,10 @@ func (b *Bot) handleGetHeroButton(ctx context.Context, message *tgbotapi.Message
 func (b *Bot) handleHeroStats(ctx context.Context, message *tgbotapi.Message) error {
 	var heroDTO hero.ToCreateDTO
 	text := message.Text
-	if existCommand(text, commands) {
-		return nil
-	}
 
 	stats := strings.Split(text, " ")
 	if len(stats) != 2 {
-		err := b.handleUnknownCommand(message)
+		err := b.wrapErr(message)
 		if err != nil {
 			return err
 		}
@@ -86,7 +83,10 @@ func (b *Bot) handleHeroStats(ctx context.Context, message *tgbotapi.Message) er
 	//validateHeroName()
 	luck, err := strconv.Atoi(stats[1])
 	if err != nil {
-		return err
+		err = b.wrapErr(message)
+		if err != nil {
+			return err
+		}
 	}
 	//validateHeroLuck()
 	heroDTO.Name = name
